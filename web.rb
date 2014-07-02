@@ -30,5 +30,5 @@ get '/log' do
 end
 
 post '/hook_sample' do
-  "#{params['X-GitHub-Event']}"
+  "#{request.header.read}"
 end
