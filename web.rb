@@ -14,7 +14,7 @@ get '/' do
   user = client.user
   user.login
 
-  isues = Octokit.issues(REPO)
+  issues = Octokit.issues(REPO)
 
   p issues
 end
