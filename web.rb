@@ -1,7 +1,7 @@
 require 'sinatra'
 require 'octokit'
 
-REPO =   KazuCocoa/tagTestRepository
+REPO = 'KazuCocoa/tagTestRepository'
 
 
 get '/' do
