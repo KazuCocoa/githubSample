@@ -30,5 +30,6 @@ get '/log' do
 end
 
 post '/hook_sample' do
+  #うまくいってない
   "#{response.head}"
 end
