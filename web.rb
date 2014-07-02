@@ -17,5 +17,5 @@ get '/' do
 
   issues = Octokit.list_issues(REPO)
 
-  p issues
+  "#{issues}"
 end
