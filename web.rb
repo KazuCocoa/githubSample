@@ -1,4 +1,4 @@
-require 'sinatra'
+#require 'sinatra'
 require 'octokit'
 
 REPO = 'KazuCocoa/tagTestRepository'
@@ -15,7 +15,10 @@ get '/' do
   user = client.user
   user.login
 
-  issues = Octokit.list_issues(REPO)
+  issues = client.list_issues(REPO)
 
-  "#{issues}"
+  "The number of issue is #{issues[0][:number]}"
+  "The title of issue is #{issues[0][:title]}"
+
+  client.add_comment(REPO, issues[0][:number], "ついかコメント！！")
 end
