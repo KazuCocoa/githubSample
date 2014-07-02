@@ -30,18 +30,22 @@ get '/log' do
 end
 
 post '/hook_sample' do
+  if params['X-GitHub-Event'] == 'pull_request'
 
-  #client = Octokit::Client.new :login  => 'defunkt', :password => 'c0d3b4ssssss!'
-  client = Octokit::Client.new access_token: '9d75246f8907b18fa22d879f80bd15be19c7f75d'
+    #client = Octokit::Client.new :login  => 'defunkt', :password => 'c0d3b4ssssss!'
+    client = Octokit::Client.new access_token: '9d75246f8907b18fa22d879f80bd15be19c7f75d'
 
-  user = client.user
-  user.login
+    user = client.user
+    user.login
 
-  issues = client.list_issues(REPO)
+    issues = client.list_issues(REPO)
 
-  #"The number of issue is #{issues[0][:number]}"
-  #"The title of issue is #{issues[0][:title]}"
+    #"The number of issue is #{issues[0][:number]}"
+    #"The title of issue is #{issues[0][:title]}"
 
-  client.add_comment(REPO, issues[0][:number], params)
-  client.add_comment(REPO, issues[0][:number], 'finish!!')
+    client.add_comment(REPO, issues[0][:number], params[:pull_request])
+    client.add_comment(REPO, issues[0][:number], 'finish!!')
+  else
+    "else"
+  end
 end
