@@ -30,5 +30,5 @@ get '/log' do
 end
 
 post '/hook_sample' do
-  "#{request.header.read}"
+  "#{request.head.read}"
 end
