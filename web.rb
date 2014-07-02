@@ -17,8 +17,8 @@ get '/' do
 
   issues = client.list_issues(REPO)
 
-  "The number of issue is #{issues[0][:number]}"
-  "The title of issue is #{issues[0][:title]}"
+  #"The number of issue is #{issues[0][:number]}"
+  #"The title of issue is #{issues[0][:title]}"
 
   puts client.add_comment(REPO, issues[0][:number], "ついかコメント！！")
 end
