@@ -64,6 +64,6 @@ post '/hook_sample' do
   end
 end
 
-post '/data' do
+get '/data' do
   "#{data}"
 end
