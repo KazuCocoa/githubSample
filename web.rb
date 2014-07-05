@@ -48,7 +48,7 @@ post '/hook_sample' do
         client.add_comment(REPO, client.list_issues(REPO).first.number, "PRが閉じたよ！")
         data = 'close PR'
       else
-        data = params[:payload]
+        data = request.env
       end
 
     when 'issues'
@@ -59,13 +59,13 @@ post '/hook_sample' do
         client.add_comment(REPO, client.list_issues(REPO).first.number, "issueが閉じたよ！")
         data = 'close issues'
       else
-        data = req_body.action
+        data = request.env
       end
     else
       data = "sample"
   end
 
-  params[:payload]
+  "#{request.env}"
 
 end
 
