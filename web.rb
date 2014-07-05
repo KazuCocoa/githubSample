@@ -39,15 +39,15 @@ post '/hook_sample' do
 
   #req_body = Hashie::Mash.new(params[:payload])
   data = request.body.read
-  req_body = Hashie::Mash.new(JSON.parse(request.body.read))
+  req_body = JSON.parse(request.body.read)
 
   case github_event
     when 'pull_request'
-      if req_body.action == 'opened'
-        client.add_comment(REPO, client.list_issues(REPO).first.number, "PRが開いたよ！")
+      if req_body[:action] == 'opened'
+        client.add_comment(REPO, client.list_issues(REPO).first[:number], "PRが開いたよ！")
         data = 'open PR'
-      elsif req_body.action == 'closed'
-        client.add_comment(REPO, client.list_issues(REPO).first.number, "PRが閉じたよ！")
+      elsif req_body[:action] == 'closed'
+        client.add_comment(REPO, client.list_issues(REPO).first[:number], "PRが閉じたよ！")
         data = 'close PR'
       else
         data = request.body
@@ -67,7 +67,7 @@ post '/hook_sample' do
       data = "sample"
   end
 
-  "#{request.body}"
+  "#{request.body.read}"
 
 end
 
