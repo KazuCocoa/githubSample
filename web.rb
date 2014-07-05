@@ -38,7 +38,7 @@ post '/hook_sample' do
   github_event = request.env['HTTP_X_GITHUB_EVENT']
 
   #req_body = Hashie::Mash.new(params[:payload])
-  data = request.body
+  data = request.body.read
   req_body = request.body
 
   case github_event
