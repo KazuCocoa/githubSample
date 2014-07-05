@@ -12,7 +12,7 @@ Octokit.api_endpoint = 'https://api.github.com'
 Octokit.web_endpoint = 'https://github.com'
 
 # for sinatra
-set :environment, :production
+#set :environment, :production
 
 # start instance
 client = Octokit::Client.new access_token: '9d75246f8907b18fa22d879f80bd15be19c7f75d'
@@ -37,7 +37,7 @@ post '/hook_sample' do
   delivery_id = request.env["HTTP_X_GITHUB_DELIVERY"]
   github_event = request.env['HTTP_X_GITHUB_EVENT']
 
-  req_body = Hashie::Mash.new(JSON.parse(params[:payload]))
+  req_body = Hashie::Mash.new(params[:payload])
 
   case github_event
     when 'pull_request'
