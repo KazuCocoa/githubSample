@@ -43,11 +43,11 @@ post '/hook_sample' do
 
   case github_event
     when 'pull_request'
-      if req_body[:action] == 'opened'
-        client.add_comment(REPO, client.list_issues(REPO).first[:number], "PRが開いたよ！")
+      if req_body['action'] == 'opened'
+        client.add_comment(REPO, client.list_issues(REPO).first['number'], "PRが開いたよ！")
         data = 'open PR'
-      elsif req_body[:action] == 'closed'
-        client.add_comment(REPO, client.list_issues(REPO).first[:number], "PRが閉じたよ！")
+      elsif req_body['action'] == 'closed'
+        client.add_comment(REPO, client.list_issues(REPO).first['number'], "PRが閉じたよ！")
         data = 'close PR'
       else
         data = request.body
