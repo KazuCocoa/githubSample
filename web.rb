@@ -37,7 +37,8 @@ post '/hook_sample' do
   delivery_id = request.env["HTTP_X_GITHUB_DELIVERY"]
   github_event = request.env['HTTP_X_GITHUB_EVENT']
 
-  req_body = Hashie::Mash.new(params[:payload])
+  #req_body = Hashie::Mash.new(params[:payload])
+  req_body = Hashie::Mash.new(request.body)
 
   case github_event
     when 'pull_request'
@@ -48,7 +49,7 @@ post '/hook_sample' do
         client.add_comment(REPO, client.list_issues(REPO).first.number, "PRが閉じたよ！")
         data = 'close PR'
       else
-        data = request.env
+        data = request.body
       end
 
     when 'issues'
@@ -59,13 +60,13 @@ post '/hook_sample' do
         client.add_comment(REPO, client.list_issues(REPO).first.number, "issueが閉じたよ！")
         data = 'close issues'
       else
-        data = request.env
+        data = request.body
       end
     else
       data = "sample"
   end
 
-  "#{request.env}"
+  "#{request.body}"
 
 end
 
