@@ -49,16 +49,19 @@ post '/hook_sample' do
 
   req_body =  Hashie::Mash.new(JSON.parse(request.body.read))
 
+  data << repository = req_body.repository.full_name
+  puts repository
+
+  data << issue_number = req_body.number
+  puts issue_number
+
   case github_event
     when PULL_REQUEST
       case req_body.action
         when OPENED
-          client.add_comment(req_body.pull_request.repo.full_name, req_body.number, "頑張ってね！！")
-          data = 'open PR'
+          client.add_comment(repository, issue_number, "頑張ってね！！")
         when CLOSED
-          date = "#{req_body[:pull_request][:repo][:full_name]}"
-          client.add_comment(req_body.pull_request.repo.full_name, req_body.number, "コングラッチュレーション！！")
-          data = 'close PR'
+          client.add_comment(repository, issue_number, "コングラッチュレーション！！")
         else
           data = 'else in pull request'
       end
