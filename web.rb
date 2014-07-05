@@ -24,7 +24,7 @@ CLOSED = 'closed'.freeze
 
 # message
 CHECK_LIST = '- [ ] 頑張る'
-
+CLOSE_COMMENT = 'イイネ！！ :+1: '
 
 
 # start instance
@@ -35,10 +35,6 @@ get '/' do
   'Hello world !'
 end
 
-get '/issues' do
-  "#{client.list_issues(REPO).first.number}"
-end
-
 data = ''
 
 post '/hook_sample' do
@@ -47,19 +43,16 @@ post '/hook_sample' do
 
   req_body =  Hashie::Mash.new(JSON.parse(request.body.read))
 
-  data << repository = req_body.pull_request.head.repo.full_name
-  puts repository
-
-  data << issue_number = req_body.number
-  puts issue_number
+  repository = req_body.repository.full_name
 
   case github_event
     when PULL_REQUEST
+      issue_number = req_body.pull_request.number
       case req_body.action
         when OPENED
           client.add_comment(repository, issue_number, CHECK_LIST)
         when CLOSED
-          client.add_comment(repository, issue_number, "コングラッチュレーション！！ :+1: ")
+          client.add_comment(repository, issue_number, CLOSE_COMMENT)
         else
           data = 'else in pull request'
       end
