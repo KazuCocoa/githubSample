@@ -46,7 +46,7 @@ post '/hook_sample' do
         client.add_comment(REPO, client.list_issues(REPO).first.number, "PRが閉じたよ！")
         data = 'close PR'
       else
-        data = github_event
+        data = req_body
       end
 
     when 'issues'
@@ -57,7 +57,7 @@ post '/hook_sample' do
         client.add_comment(REPO, client.list_issues(REPO).first.number, "issueが閉じたよ！")
         data = 'close issues'
       else
-        data = github_event
+        data = req_body
       end
     else
       data = "sample"
