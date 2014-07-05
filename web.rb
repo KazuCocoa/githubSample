@@ -14,7 +14,6 @@ Octokit.web_endpoint = 'https://github.com'
 # for sinatra
 #set :environment, :production
 
-
 # definition of event
 PULL_REQUEST = 'pull_request'.freeze
 ISSUES = 'issues'.freeze
@@ -22,6 +21,10 @@ ISSUES = 'issues'.freeze
 # definition of action
 OPENED = 'opened'.freeze
 CLOSED = 'closed'.freeze
+
+# message
+CHECK_LIST = '- [ ] 頑張る'
+
 
 
 # start instance
@@ -34,11 +37,6 @@ end
 
 get '/issues' do
   "#{client.list_issues(REPO).first.number}"
-end
-
-post '/comment' do
-  client.add_comment(REPO, client.list_issues(REPO).first.number, "ついかコメント3！！")
-  "finish!!"
 end
 
 data = ''
@@ -59,7 +57,7 @@ post '/hook_sample' do
     when PULL_REQUEST
       case req_body.action
         when OPENED
-          client.add_comment(repository, issue_number, "頑張ってね！！")
+          client.add_comment(repository, issue_number, CHECK_LIST)
         when CLOSED
           client.add_comment(repository, issue_number, "コングラッチュレーション！！")
         else
