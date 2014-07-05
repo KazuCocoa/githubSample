@@ -4,4 +4,5 @@ ruby '2.1.0'
 gem 'sinatra', '~>1.4.4'
 gem 'thin'
 
-gem "octokit", "~> 3.0"
+gem 'octokit', '~> 3.0'
+gem 'hashie'

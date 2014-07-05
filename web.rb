@@ -1,35 +1,70 @@
+# coding: utf-8
+
 require 'sinatra'
 require 'octokit'
+require 'hashie'
 
 REPO = 'KazuCocoa/tagTestRepository'
 
 Octokit.api_endpoint = 'https://api.github.com'
 Octokit.web_endpoint = 'https://github.com'
 
-logs = ''
+# for sinatra
+set :environment, :production
 
-get '/comment' do
+# start instance
+client = Octokit::Client.new access_token: '9d75246f8907b18fa22d879f80bd15be19c7f75d'
 
-  #client = Octokit::Client.new :login  => 'defunkt', :password => 'c0d3b4ssssss!'
-  client = Octokit::Client.new access_token: '9d75246f8907b18fa22d879f80bd15be19c7f75d'
 
-  user = client.user
-  user.login
+get '/' do
+  'Hello world !'
+end
 
-  issues = client.list_issues(REPO)
+get '/issues' do
+  "#{client.list_issues(REPO).first.number}"
+end
 
-  #"The number of issue is #{issues[0][:number]}"
-  #"The title of issue is #{issues[0][:title]}"
-
-  client.add_comment(REPO, issues[0][:number], "ついかコメント3！！")
+post '/comment' do
+  client.add_comment(REPO, client.list_issues(REPO).first.number, "ついかコメント3！！")
   "finish!!"
 end
 
-get '/log' do
-  "#{logs}"
+data = ''
+
+post '/hook_sample' do
+  delivery_id = request.env["HTTP_X_GITHUB_DELIVERY"]
+  github_event = request.env['HTTP_X_GITHUB_EVENT']
+
+  req_body = Hashie::Mash.new(params[:payload])
+
+  case github_event
+    when 'pull_request'
+      if req_body.action == 'opened'
+        client.add_comment(REPO, client.list_issues(REPO).first.number, "PRが開いたよ！")
+        data = 'open PR'
+      elsif req_body.action == 'closed'
+        client.add_comment(REPO, client.list_issues(REPO).first.number, "PRが閉じたよ！")
+        data = 'close PR'
+      else
+        data = github_event
+      end
+
+    when 'issues'
+      if req_body.action == 'opened'
+        client.add_comment(REPO, client.list_issues(REPO).first.number, "issueが開いたよ！")
+        data = 'open issues'
+      elsif req_body.action == 'closed'
+        client.add_comment(REPO, client.list_issues(REPO).first.number, "issueが閉じたよ！")
+        data = 'close issues'
+      else
+        data = github_event
+      end
+    else
+      data = "sample"
+  end
 end
 
 post '/hook_sample' do
   #うまくいってない
-  "#{response.head}"
+  "#{data}"
 end
