@@ -46,7 +46,7 @@ post '/hook_sample' do
         client.add_comment(REPO, client.list_issues(REPO).first.number, "PRが閉じたよ！")
         data = 'close PR'
       else
-        data = req_body
+        data = req_body.action
       end
 
     when 'issues'
