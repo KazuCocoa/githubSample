@@ -37,14 +37,13 @@ post '/hook_sample' do
   delivery_id = request.env["HTTP_X_GITHUB_DELIVERY"]
   github_event = request.env['HTTP_X_GITHUB_EVENT']
 
-  #req_body = Hashie::Mash.new(params[:payload])
   data = request.env
   req_body =  Hashie::Mash.new(JSON.parse(request.body.read))
 
   case github_event
     when 'pull_request'
-      if req_body['action'] == 'opened'
-        client.add_comment(REPO, client.list_issues(REPO).first['number'], "PRが開いたよ！")
+      if req_body.action == 'opened'
+        client.add_comment(REPO, client.list_issues(REPO).first.number, "PRが開いたよ！")
         data = 'open PR'
       elsif req_body['action'] == 'closed'
         client.add_comment(REPO, client.list_issues(REPO).first['number'], "PRが閉じたよ！")
@@ -52,19 +51,8 @@ post '/hook_sample' do
       else
         data = 'else in pull request'
       end
-
-    when 'issues'
-      if req_body.action == 'opened'
-        client.add_comment(REPO, client.list_issues(REPO).first.number, "issueが開いたよ！")
-        data = 'open issues'
-      elsif req_body.action == 'closed'
-        client.add_comment(REPO, client.list_issues(REPO).first.number, "issueが閉じたよ！")
-        data = 'close issues'
-      else
-        data = request.body
-      end
     else
-      data = request.env
+      data = 'sample'
   end
 end
 
