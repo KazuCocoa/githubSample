@@ -47,7 +47,7 @@ post '/hook_sample' do
 
   req_body =  Hashie::Mash.new(JSON.parse(request.body.read))
 
-  data << repository = req_body.pull_request.repo.full_name
+  data << repository = req_body.pull_request.head.repo.full_name
   puts repository
 
   data << issue_number = req_body.number
