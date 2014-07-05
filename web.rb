@@ -56,6 +56,7 @@ post '/hook_sample' do
           client.add_comment(req_body.pull_request.repo.full_name, req_body.number, "頑張ってね！！")
           data = 'open PR'
         when CLOSED
+          date = "#{req_body.pull_request.repo.full_name}"
           client.add_comment(req_body.pull_request.repo.full_name, req_body.number, "コングラッチュレーション！！")
           data = 'close PR'
         else
