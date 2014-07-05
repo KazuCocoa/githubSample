@@ -39,8 +39,7 @@ post '/hook_sample' do
 
   #req_body = Hashie::Mash.new(params[:payload])
   data = JSON.parse(request.body.read)
-  #req_body =  Hashie::Mash.new(data)
-  req_body =  data
+  req_body =  Hashie::Mash.new(data)
 
   case github_event
     when 'pull_request'
