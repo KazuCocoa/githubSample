@@ -64,7 +64,6 @@ post '/hook_sample' do
   end
 end
 
-post '/hook_sample' do
-  #うまくいってない
+post '/data' do
   "#{data}"
 end
