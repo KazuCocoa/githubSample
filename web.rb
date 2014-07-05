@@ -47,7 +47,7 @@ post '/hook_sample' do
 
   req_body =  Hashie::Mash.new(JSON.parse(request.body.read))
 
-  data << repository = req_body.repository.full_name
+  data << repository = req_body.pull_request.repo.full_name
   puts repository
 
   data << issue_number = req_body.number
@@ -59,7 +59,7 @@ post '/hook_sample' do
         when OPENED
           client.add_comment(repository, issue_number, CHECK_LIST)
         when CLOSED
-          client.add_comment(repository, issue_number, "コングラッチュレーション！！")
+          client.add_comment(repository, issue_number, "コングラッチュレーション！！ :+1: ")
         else
           data = 'else in pull request'
       end
