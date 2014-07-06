@@ -6,7 +6,7 @@ require 'hashie'
 
 require 'json'
 
-REPO = 'KazuCocoa/tagTestRepository'
+require './comments'
 
 Octokit.api_endpoint = 'https://api.github.com'
 Octokit.web_endpoint = 'https://github.com'
@@ -22,14 +22,31 @@ ISSUES = 'issues'.freeze
 OPENED = 'opened'.freeze
 CLOSED = 'closed'.freeze
 
-# message
-PR_OPEN_COMMENT = '- [ ] 頑張る'
-PR_CLOSE_COMMENT = 'イイネ！！ :+1: '
 
+def pr_comment_for_ios_cookpad(action)
+  case action
+    when OPENED
+      PR_OPEN_COMMENT_IOS
+    when CLOSED
+      PR_CLOSE_COMMENT_IOS
+    else
+      'nothing'
+  end
+end
 
+def pr_comment_for_android_cookpad(action)
+  case action
+    when OPENED
+      PR_OPEN_COMMENT_ANDROID
+    when CLOSED
+      PR_CLOSE_COMMENT_ANDROID
+    else
+      'nothing'
+  end
+end
 
-def get_comment_with(status)
-  case status
+def default_pr_comment(action)
+  case action
     when OPENED
       PR_OPEN_COMMENT
     when CLOSED
@@ -39,14 +56,29 @@ def get_comment_with(status)
   end
 end
 
-def comment_for_pr(client, repository, issue_number, status)
-  if status == OPENED || status == CLOSED
-    client.add_comment(repository, issue_number, get_comment_with(status))
+
+def get_pr_comment_with(repository, action)
+  repo = repository.downcase
+  case repo
+    when 'ios' #full repository name
+      pr_comment_for_ios_cookpad(action)
+    when 'android' #full repository name
+      pr_comment_for_android_cookpad(action)
+    else
+      default_pr_comment(action)
+  end
+end
+
+
+def comment_for_pr(client, repository, issue_number, action)
+  if action == OPENED || action == CLOSED
+    client.add_comment(repository, issue_number, get_pr_comment_with(repository, action))
   else
     'nothing'
   end
 end
 
+#===================================
 
 get '/' do
   'Hello world !'
