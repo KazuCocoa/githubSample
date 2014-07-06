@@ -27,8 +27,16 @@ CHECK_LIST = '- [ ] 頑張る'
 CLOSE_COMMENT = 'イイネ！！ :+1: '
 
 
-# start instance
-client = Octokit::Client.new access_token: '9d75246f8907b18fa22d879f80bd15be19c7f75d'
+def comment_for_pr(client, repository, issue_number, status) do
+  case status
+    when OPENED
+      client.add_comment(repository, issue_number, CHECK_LIST)
+    when CLOSED
+      client.add_comment(repository, issue_number, CLOSE_COMMENT)
+    else
+      "nothing"
+  end
+end
 
 
 get '/' do
@@ -45,17 +53,14 @@ post '/hook_sample' do
 
   repository = req_body.repository.full_name
 
+
+  # start instance
+  client = Octokit::Client.new access_token: '9d75246f8907b18fa22d879f80bd15be19c7f75d'
+
   case github_event
     when PULL_REQUEST
       issue_number = req_body.pull_request.number
-      case req_body.action
-        when OPENED
-          client.add_comment(repository, issue_number, CHECK_LIST)
-        when CLOSED
-          client.add_comment(repository, issue_number, CLOSE_COMMENT)
-        else
-          data = 'else in pull request'
-      end
+      comment_for_pr client, repository, req_body.pull_request.number, req_body.action
     else
       data = 'sample'
   end
