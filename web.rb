@@ -28,7 +28,7 @@ CLOSE_COMMENT = 'イイネ！！ :+1: '
 
 
 # start instance
-@client = Octokit::Client.new access_token: '9d75246f8907b18fa22d879f80bd15be19c7f75d'
+client = Octokit::Client.new access_token: '9d75246f8907b18fa22d879f80bd15be19c7f75d'
 
 
 get '/' do
@@ -50,9 +50,9 @@ post '/hook_sample' do
       issue_number = req_body.pull_request.number
       case req_body.action
         when OPENED
-          @client.add_comment(repository, issue_number, CHECK_LIST)
+          client.add_comment(repository, issue_number, CHECK_LIST)
         when CLOSED
-          @client.add_comment(repository, issue_number, CLOSE_COMMENT)
+          client.add_comment(repository, issue_number, CLOSE_COMMENT)
         else
           data = 'else in pull request'
       end
