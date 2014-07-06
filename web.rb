@@ -23,18 +23,27 @@ OPENED = 'opened'.freeze
 CLOSED = 'closed'.freeze
 
 # message
-CHECK_LIST = '- [ ] 頑張る'
-CLOSE_COMMENT = 'イイネ！！ :+1: '
+PR_OPEN_COMMENT = '- [ ] 頑張る'
+PR_CLOSE_COMMENT = 'イイネ！！ :+1: '
 
 
-def comment_for_pr(client, repository, issue_number, status) do
+
+def get_comment_with(status)
   case status
     when OPENED
-      client.add_comment(repository, issue_number, CHECK_LIST)
+      PR_OPEN_COMMENT
     when CLOSED
-      client.add_comment(repository, issue_number, CLOSE_COMMENT)
+      PR_CLOSE_COMMENT
     else
-      "nothing"
+      'nothing'
+  end
+end
+
+def comment_for_pr(client, repository, issue_number, status)
+  if status == OPENED || status == CLOSED
+    client.add_comment(repository, issue_number, get_comment_with(status))
+  else
+    'nothing'
   end
 end
 
@@ -42,8 +51,6 @@ end
 get '/' do
   'Hello world !'
 end
-
-data = ''
 
 post '/hook_sample' do
   delivery_id = request.env["HTTP_X_GITHUB_DELIVERY"]
@@ -53,19 +60,13 @@ post '/hook_sample' do
 
   repository = req_body.repository.full_name
 
-
   # start instance
   client = Octokit::Client.new access_token: '9d75246f8907b18fa22d879f80bd15be19c7f75d'
 
   case github_event
     when PULL_REQUEST
-      issue_number = req_body.pull_request.number
       comment_for_pr client, repository, req_body.pull_request.number, req_body.action
     else
-      data = 'sample'
+      'nothing'
   end
-end
-
-get '/data' do
-  "#{data}"
 end
