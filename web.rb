@@ -101,7 +101,7 @@ post '/hook_sample' do
 
   case github_event
     when 'pull_request'
-      comment_for_pr(client, repository, req_body.'pull_request'.number, req_body.action)
+      comment_for_pr(client, repository, req_body.pull_request.number, req_body.action)
     else
       'nothing'
   end
