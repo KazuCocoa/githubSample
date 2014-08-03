@@ -8,30 +8,17 @@ require 'json'
 
 require './comments'
 
-# environments
-Octokit.api_endpoint = 'https://api.github.com'
-Octokit.web_endpoint = 'https://github.com'
-
 # access_token
 ACCESS_TOKEN = '9d75246f8907b18fa22d879f80bd15be19c7f75d'
 
 # for sinatra
 #set :environment, :production
 
-# definition of event
-PULL_REQUEST = 'pull_request'.freeze
-ISSUES = 'issues'.freeze
-
-# definition of action
-OPENED = 'opened'.freeze
-CLOSED = 'closed'.freeze
-
-
 def pr_comment_for_ios_cookpad(action)
   case action
-    when OPENED
+    when 'opened'
       PR_OPEN_COMMENT_IOS
-    when CLOSED
+    when 'closed'
       PR_CLOSE_COMMENT_IOS
     else
       'nothing'
@@ -40,9 +27,9 @@ end
 
 def pr_comment_for_android_cookpad(action)
   case action
-    when OPENED
+    when 'opened'
       PR_OPEN_COMMENT_ANDROID
-    when CLOSED
+    when 'closed'
       PR_CLOSE_COMMENT_ANDROID
     else
       'nothing'
@@ -51,9 +38,9 @@ end
 
 def default_pr_comment(action)
   case action
-    when OPENED
+    when 'opened'
       PR_OPEN_COMMENT
-    when CLOSED
+    when 'closed'
       PR_CLOSE_COMMENT
     else
       'nothing'
@@ -75,10 +62,23 @@ end
 
 
 def comment_for_pr(client, repository, issue_number, action)
-  if action == OPENED || action == CLOSED
+  if action == 'opened' || action == 'closed'
     client.add_comment(repository, issue_number, get_pr_comment_with(repository, action))
   else
     'nothing'
+  end
+end
+
+# extend class for original bot
+class OctokitBot < Octokit::Client
+  def initialize *args
+    #Octokit.api_endpoint = 'http://api.github.dev'
+    #Octokit.web_endpoint = 'http://github.dev'
+    super
+  end
+
+  def sample_method
+    'Hello Sample Method!'
   end
 end
 
@@ -100,9 +100,21 @@ post '/hook_sample' do
   client = Octokit::Client.new(access_token: ACCESS_TOKEN)
 
   case github_event
-    when PULL_REQUEST
-      comment_for_pr(client, repository, req_body.pull_request.number, req_body.action)
+    when 'pull_request'
+      comment_for_pr(client, repository, req_body.'pull_request'.number, req_body.action)
     else
       'nothing'
   end
+end
+
+get '/participant_list' do
+  # start instance
+  client = Octokit::Client.new(access_token: ACCESS_TOKEN)
+
+end
+
+get '/sample' do
+  client = OctokitBot.new(access_token: ACCESS_TOKEN)
+
+  "#{client.sample_method}"
 end
