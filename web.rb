@@ -84,9 +84,6 @@ end
 
 #===================================
 
-get '/' do
-  'Hello world !'
-end
 
 post '/hook_sample' do
   delivery_id = request.env["HTTP_X_GITHUB_DELIVERY"]
@@ -107,11 +104,109 @@ post '/hook_sample' do
   end
 end
 
-get '/participant_list' do
-  # start instance
-  client = Octokit::Client.new(access_token: ACCESS_TOKEN)
+# sample repo is KazuCocoa/tagTestRepository
 
+# Get title, number, open_issue, close_issue and due_on of milestones against the repository.
+# @param repo,  A GitHub repository.
+# @option :status, status of milestone. (default is open)
+# @option :sort, :sort (created) Sort: <tt>created</tt>, <tt>updated</tt>, or <tt>comments</tt>.
+# @option :dir (desc) Direction: <tt>asc</tt> or <tt>desc</tt>.
+# @return [Array] A list of milestones. number, title, open_issues, close_issues and due_on.
+get '/milestones' do
+  error 400 unless params['repo']
+
+  repository = params['repo']
+  option = {
+      state: params['status'] ||= 'open',
+      sort: params['sort'] ||= 'created',
+      direction: params['dir'] ||= 'desc'
+  }
+
+  client = OctokitBot.new(access_token: ACCESS_TOKEN)
+
+  # see https://developer.github.com/v3/issues/milestones/
+  milestones = client.list_milestones(repository, option)
+
+  milestones.map! do |milestone|
+    {
+        number: milestone.number,
+        title: milestone.title,
+        open_issue: milestone.open_issues,
+        close_issue: milestone.close_issues,
+        due_on: milestone.due_on
+    }
+  end
+
+  "#{milestones}"
 end
+
+# Get list of assignees who assigned in the milestone.
+# @param repo,  A GitHub repository.
+# @option :number, A number of the Milestone. (if nil, you can obtain all milestones)
+# @return [Array] A list of users who assigned.
+# see https://developer.github.com/v3/issues/milestones/
+# Example
+# request: http://localhost/milestone/1/assignees?repo=repository_name
+# return: [{"user name1"}, {"user name2"}}
+get '/milestone/:number/assignees' do
+  error 400 unless params['repo']
+
+  repository = params['repo']
+  option = {
+      milestone: params[:number]
+  }
+
+  #client = OctokitBot.new(access_token: ACCESS_TOKEN)
+  client = OctokitBot.new() #the client doesn't comment. So, don't need ACCESS_TOKEN
+
+  issues = client.list_issues(repository, option)
+  assignees = issues.map do |issue|
+    issue.assignee.login unless issue.assignee.nil?
+  end
+  assignees.compact!.uniq!
+
+  "#{assignees}"
+  # milestoneに紐づくissues一覧を取得するのによさそう
+end
+
+# Get list of issue number and titles which have no assignees.
+# Example
+# request: http://localhost/milestone/1/non_assignees/issues?repo=repository_name
+# return: [{:number=>13, :title=>"2nd"}, {:number=>25, :title=>"3rd"}
+# 毎朝、マイルストーンに設定されているかどうかを確認する。
+get '/milestone/:number/non_assignees/issues' do
+  error 400 unless params['repo']
+
+  repository = params['repo']
+  option = {
+      milestone: params[:number],
+      state: params[:state] ||= 'open'
+  }
+
+  #client = OctokitBot.new(access_token: ACCESS_TOKEN)
+  client = OctokitBot.new() #the client doesn't comment. So, don't need ACCESS_TOKEN
+
+
+  # see https://developer.github.com/v3/issues/milestones/
+  issues = client.list_issues(repository, option)
+
+  #milestoneに対する操作を書く
+
+  non_assineers = issues.map do |issue|
+    if issue.assignee.nil?
+      {
+          number: issue.number,
+          title: issue.title
+      }
+    end
+  end
+
+  non_assineers.compact!
+
+  "#{non_assineers}"
+  # milestoneに紐づくissues一覧を取得するのによさそう
+end
+
 
 get '/sample' do
   client = OctokitBot.new(access_token: ACCESS_TOKEN)
