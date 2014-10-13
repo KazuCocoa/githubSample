@@ -212,7 +212,10 @@ get '/sample' do
 end
 
 post '/crashlytics_sample' do
-  puts "#{request.body.read}"
-
+  File.write("crashlytics_logs.txt", "#{request.body.read}")
   status 200
+end
+
+get '/get_crashlytics_logs' do
+  "#{File.read("crashlytics_logs.txt", :encoding => Encoding::UTF_8)}"
 end
