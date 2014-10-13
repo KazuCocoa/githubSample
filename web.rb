@@ -119,7 +119,7 @@ get '/milestones' do
       direction: params['dir'] ||= 'desc'
   }
 
-  client = OctokitBot.new(access_token: ACCESS_TOKEN)
+  client = OctokitBot.new(access_token: ['ACCESS_TOKEN'])
 
   # see https://developer.github.com/v3/issues/milestones/
   milestones = client.list_milestones(repository, option)
@@ -153,7 +153,7 @@ get '/milestone/:number/assignees' do
       milestone: params[:number]
   }
 
-  #client = OctokitBot.new(access_token: ACCESS_TOKEN)
+  #client = OctokitBot.new(access_token: ['ACCESS_TOKEN'])
   client = OctokitBot.new() #the client doesn't comment. So, don't need ACCESS_TOKEN
 
   issues = client.list_issues(repository, option)
@@ -180,7 +180,7 @@ get '/milestone/:number/non_assignees/issues' do
       state: params[:state] ||= 'open'
   }
 
-  #client = OctokitBot.new(access_token: ACCESS_TOKEN)
+  #client = OctokitBot.new(access_token: ['ACCESS_TOKEN'])
   client = OctokitBot.new() #the client doesn't comment. So, don't need ACCESS_TOKEN
 
 
@@ -206,7 +206,7 @@ end
 
 
 get '/sample' do
-  client = OctokitBot.new(access_token: ACCESS_TOKEN)
+  client = OctokitBot.new(access_token: ENV['ACCESS_TOKEN'])
 
   "#{client.sample_method}"
 end
