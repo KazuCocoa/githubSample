@@ -210,3 +210,8 @@ get '/sample' do
 
   "#{client.sample_method}"
 end
+
+post '/crashlytics_sample' do
+  puts request.body.read
+  status 200
+end
