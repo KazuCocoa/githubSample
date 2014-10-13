@@ -8,9 +8,6 @@ require 'json'
 
 require './comments'
 
-# access_token
-ACCESS_TOKEN = '9d75246f8907b18fa22d879f80bd15be19c7f75d'
-
 # for sinatra
 #set :environment, :production
 
@@ -94,7 +91,7 @@ post '/hook_sample' do
   repository = req_body.repository.full_name
 
   # start instance
-  client = Octokit::Client.new(access_token: ACCESS_TOKEN)
+  client = Octokit::Client.new(access_token: ENV['ACCESS_TOKEN']) # access_token for GitHub
 
   case github_event
     when 'pull_request'
