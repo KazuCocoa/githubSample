@@ -212,6 +212,7 @@ get '/sample' do
 end
 
 post '/crashlytics_sample' do
-  puts request.body.read
+  puts "#{request.body.read}"
+
   status 200
 end
